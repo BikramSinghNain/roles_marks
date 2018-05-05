@@ -1,0 +1,31 @@
+<?php
+
+function roles_marks_menu(){
+    global $user;
+    $theCallback = 'roles_marks_stu_view';
+    $items = array();
+    if(in_array('administrator',$user->roles) || in_array('Teacher',$user->roles)){
+        $theCallback = 'roles_marks_teach_view';
+    }
+    
+
+    $items['themarks'] = array(
+        'title' => 'The Marks',
+        'description'=>'Display/Modify The Marks',
+        'page callback'=>'drupal_get_form',
+        'page arguments'=>array(
+            $theCallback
+        ),
+        'access callback'=>true
+    );
+
+    return $items;
+}
+
+function roles_marks_stu_view($form,&$formState){
+
+}
+
+function roles_marks_teach_view($form,&$formState){
+
+}
