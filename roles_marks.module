@@ -173,7 +173,7 @@ function roles_marks_view($form,&$formState){
     // Check wether table exist
     if(db_table_exists('roles_marks_data')){
         // fetch the data for a particular Roll No
-        $query = db_query('SELECT * FROM {roles_marks_data} WHERE rollno = (:val)',array(':val'=>12053));
+        $query = db_query('SELECT * FROM {roles_marks_data} WHERE rollno = (:val)',array(':val'=>$formState['values']['rollno']));
         $rows = $query->fetchall(); 
         // Check Wether Data Exist or not
         if(count($rows) < 1) $out = '<b> Result Not Found :( </b>';
