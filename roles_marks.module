@@ -1,5 +1,6 @@
 <?php
 
+// Implementation of hook_menu()
 function roles_marks_menu(){
     $items = array();
     $items['themarks'] = array(
@@ -7,29 +8,29 @@ function roles_marks_menu(){
         'description'=>'Display/Modify The Marks',
         'page callback'=>'drupal_get_form',
         'page arguments'=>array(
-            'roles_marks_form'
+            'roles_marks_form' // Callback Function
         ),
         'access callback'=>true
     );
     return $items;
 }
 
+// The Definition of the CallBack Function 
 function roles_marks_form($form,&$formState){
-    global $user;
-    $isStu = false;
-    if(in_array('Student',$user->roles) || in_array('anonymous user',$user->roles)){
+    global $user; // Get The User Details
+    $isStu = false; // Boolean Value to Store is Student
+    // Check if The User is Student or an anonymous user then set is Student to tue
+    if(in_array('Student',$user->roles) || in_array('anonymous user',$user->roles))
         $isStu = true;
-    }
-
-    if(!$isStu){
-        $form = roles_marks_get_teach($form);
-    }else $form = roles_marks_get_stu($form);
-
+    // if it is not student get teacher form else student form
+    if(!$isStu) $form = roles_marks_get_teach($form);
+    else        $form = roles_marks_get_stu($form);
     return $form;
 }
 
 // Function To get The Teaching Form
 function roles_marks_get_teach($form){
+    // Roll No TextField
     $form['rollno'] = array(
         '#type'=>'textfield',
         '#title'=>t('Roll No'),
@@ -37,7 +38,7 @@ function roles_marks_get_teach($form){
         '#maxlength'=>20,
         '#required'=>true
     );
-
+    // Student Name TextField
     $form['student'] = array(
         '#type'=>'textfield',
         '#title'=>t('Student Name'),
@@ -45,11 +46,11 @@ function roles_marks_get_teach($form){
         '#maxlength'=>20,
         '#required'=>true
     );
-
+    // Display a helping Text
     $form['helptext1']=array(
         '#markup'=>'<h2>Enter The Marks Below</h2><br>'
     );
-
+    // English Marks TextField
     $form['english'] = array(
         '#type'=>'textfield',
         '#title'=>t('English'),
@@ -57,6 +58,7 @@ function roles_marks_get_teach($form){
         '#maxlength'=>20,
         '#required'=>true
     );
+    // Physics Marks TextField
     $form['physics'] = array(
         '#type'=>'textfield',
         '#title'=>t('Physics'),
@@ -64,6 +66,7 @@ function roles_marks_get_teach($form){
         '#maxlength'=>20,
         '#required'=>true
     );
+    // Mathematics Marks TextField
     $form['maths'] = array(
         '#type'=>'textfield',
         '#title'=>t('Mathematics'),
@@ -71,7 +74,7 @@ function roles_marks_get_teach($form){
         '#maxlength'=>20,
         '#required'=>true
     );
-    
+    // Chemistry Marks TextField    
     $form['chem'] = array(
         '#type'=>'textfield',
         '#title'=>t('Chemistry'),
@@ -79,7 +82,7 @@ function roles_marks_get_teach($form){
         '#maxlength'=>20,
         '#required'=>true
     );
-
+    // Computer Science Marks TextField
     $form['cs'] = array(
         '#type'=>'textfield',
         '#title'=>t('Computer Science'),
@@ -87,6 +90,7 @@ function roles_marks_get_teach($form){
         '#maxlength'=>20,
         '#required'=>true
     );
+    // The Submit Button
     $form['submit'] = array(
         '#type'=>'submit',
         '#value'=>t('Save Marks'),
@@ -94,7 +98,7 @@ function roles_marks_get_teach($form){
            'callback' =>'roles_marks_save'
         )
     );
-
+    // The Display All Button
     $form['displayAll'] = array(
         '#type'=>'submit',
         '#value'=>t('Display ALL Result'),
@@ -102,7 +106,7 @@ function roles_marks_get_teach($form){
            'callback' =>'roles_marks_all'
         )
     );
-
+    // A Div to Display the Results
     $form['save_div']=array(
         '#type'=>'markup',
         '#prefix'=>'<div id="save_div">',
@@ -110,10 +114,10 @@ function roles_marks_get_teach($form){
     );
     return $form;
 }
-
+// Function to Save The Data to the database
 function roles_marks_save($form,&$formState){
-    $message = "Data Can't Be Saved";
-    $data = array();
+    $message = "Data Can't Be Saved"; // message variable to be Printed
+    $data = array(); // The row field variable to store values 
     $data['rollno'] = $formState['values']['rollno'];
     $data['sname'] = $formState['values']['student'];
     $data['eng'] = (int)$formState['values']['english'];
@@ -121,25 +125,25 @@ function roles_marks_save($form,&$formState){
     $data['math'] = (int)$formState['values']['maths'];
     $data['chem'] = (int)$formState['values']['chem'];
     $data['cs'] = (int)$formState['values']['cs'];
-
+    /// Check Wether the roll no and the name is not empty
     $is_empty = false;
-    foreach($data as $d){
+    foreach($data as $d)
         if(is_string($d) && empty($d))
             $is_empty = true;
-    }
-    
+    // if table exist and roll no and name is not empty then add the data to the database
     if(!$is_empty && db_table_exists('roles_marks_data')){
         $query = db_insert('roles_marks_data');
         $query->fields($data)->execute();
-        $message = 'Data Saved';
+        $message = 'Data Saved'; // Change the message to data is saved
     }
-
+    // Call the Javascript function to Display data
     $commands[] = ajax_command_invoke(NULL,"diplaySave",array('<strong>'.$message.'</strong>'));
     return array('#type'=>'ajax','#commands'=>$commands);
 }
 
-// function for student form
+// function to return student form
 function roles_marks_get_stu($form){
+    // The roll no textField
     $form['rollno'] = array(
         '#type'=>'textfield',
         '#size'=>30,
@@ -147,6 +151,7 @@ function roles_marks_get_stu($form){
         '#required'=>true,
         '#title'=>'Roll Number '
     );
+    // The submit button
     $form['submit']=array(
         '#type'=>'submit',
         '#value'=>t('View Result'),
@@ -154,22 +159,26 @@ function roles_marks_get_stu($form){
             'callback'=>'roles_marks_view'
         )
     );
+    // Div to Display the Marks
     $form['display_marks']=array(
         '#type'=>'markup',
         '#prefix'=>'<div id="display_marks">',
         '#suffix'=>'</div>'
     );
-
     return $form;
 }
-
+// The ajax callback function to Display the Data 
 function roles_marks_view($form,&$formState){
-    $out = '';
+    $out = ''; // variable to store the output html
+    // Check wether table exist
     if(db_table_exists('roles_marks_data')){
+        // fetch the data for a particular Roll No
         $query = db_query('SELECT * FROM {roles_marks_data} WHERE rollno = (:val)',array(':val'=>12053));
-        $rows = $query->fetchall();
+        $rows = $query->fetchall(); 
+        // Check Wether Data Exist or not
         if(count($rows) < 1) $out = '<b> Result Not Found :( </b>';
         else{
+            // Print The Data is a tablular form as well as display the percentage
             $out .= '<h2>Student Name : '.$rows[0]->sname.'</h2>';
             $out .= '<h2>Roll Number : '.$rows[0]->rollno.'</h2>';
             $out .= '<table><tr><th>Subject</th><th>Marks</th></tr>';
@@ -188,20 +197,24 @@ function roles_marks_view($form,&$formState){
             $per = ($rows[0]->cs+$rows[0]->chem+$rows[0]->math+$rows[0]->phy+$rows[0]->eng)/5;
             $out .= '<h2> Percentage : '.$per.'%</h2>';
         }
-    }else $out = '<b>Data Not Found :( </b>';
-
+    }else $out = '<b>Data Not Found :( </b>'; // if Table Not Exist display the Message
+    // Call the javascript function to display the marks
     $commands[] = ajax_command_invoke(NULL,"displayMarks",array($out));
     return array('#type'=>'ajax','#commands'=>$commands);    
 }
 
-// Function to Displa ALl the marks
+// Function to Display ALl the marks
 function roles_marks_all($form,&$formState){
-    $out = '';
+    $out = ''; // Function to store output html
+    // Check Wether Table exist or not
     if(db_table_exists('roles_marks_data')){
+        /// Fetch the Data from The Database
         $query = db_query('SELECT * FROM {roles_marks_data}');
         $rows = $query->fetchall();
+        // if There is no data print a message.
         if(count($rows) < 1) $out = '<b> No Results </b>';
         else{
+            // Display data in a tabular form using html
             $out .= '<table><tr><th>Roll No</th><th>Name</th><th>English</th><th>Physics</th><th>Mathematics</th><th>Chemistry</th><th>Computer Science</th></tr>';
             foreach($rows as $row){
                 $out .= '<tr><td>';
@@ -216,7 +229,7 @@ function roles_marks_all($form,&$formState){
             $out .= '</table>';
         }
     }else $out = '<b>Data Not Found :( </b>';
-
+    // Call the Javascript funtion to display the Data
     $commands[] = ajax_command_invoke(NULL,"diplaySave",array($out));
     return array('#type'=>'ajax','#commands'=>$commands);
 }
