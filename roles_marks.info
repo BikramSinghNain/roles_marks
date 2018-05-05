@@ -1,0 +1,3 @@
+name="Role Marks"
+description="It is a Drupal Module , Which display / edit marks depending upon the role of the user."
+core=7.x
