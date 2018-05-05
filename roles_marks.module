@@ -118,9 +118,13 @@ function roles_marks_save($form,&$formState){
     $data['chem'] = (int)$formState['values']['chem'];
     $data['cs'] = (int)$formState['values']['cs'];
 
-    dpm($data);
-
-    if(db_table_exists('roles_marks_data')){
+    $is_empty = false;
+    foreach($data as $d){
+        if(is_string($d) && empty($d))
+            $is_empty = true;
+    }
+    
+    if(!$is_empty && db_table_exists('roles_marks_data')){
         $query = db_insert('roles_marks_data');
         $query->fields($data)->execute();
         $message = 'Data Saved';
