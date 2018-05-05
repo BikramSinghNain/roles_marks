@@ -23,7 +23,8 @@ function roles_marks_form($form,&$formState){
 
     if(!$isStu){
         $form = roles_marks_get_teach($form);
-    }
+    }else $form = roles_marks_get_stu($form);
+
     return $form;
 }
 
@@ -127,4 +128,23 @@ function roles_marks_save($form,&$formState){
 
     $commands[] = ajax_command_invoke(NULL,"diplaySave",array('<strong>'.$message.'</strong>'));
     return array('#type'=>'ajax','#commands'=>$commands);
+}
+
+// function for student form
+function roles_marks_get_stu($form){
+    $form['rollno'] = array(
+        '#type'=>'textfield',
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true,
+        '#title'=>'Roll Number '
+    );
+    $form['submit']=array(
+        '#type'=>'submit',
+        '#value'=>t('View Result'),
+        '#ajax'=>array(
+            'callback'=>'roles_marks_view'
+        )
+    );
+    return $form;
 }
