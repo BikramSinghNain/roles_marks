@@ -7,8 +7,6 @@ function roles_marks_menu(){
     if(in_array('administrator',$user->roles) || in_array('Teacher',$user->roles)){
         $theCallback = 'roles_marks_teach_view';
     }
-    
-
     $items['themarks'] = array(
         'title' => 'The Marks',
         'description'=>'Display/Modify The Marks',
@@ -24,8 +22,90 @@ function roles_marks_menu(){
 
 function roles_marks_stu_view($form,&$formState){
 
+    $form['submit'] = array(
+        '#type'=>'submit',
+        '#title'=>'Save Marks',
+        '#ajax' => array(
+            'callback' =>'roles_marks_view'
+        )
+    );    
+    return $form;
 }
 
 function roles_marks_teach_view($form,&$formState){
+    $form['rollno'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Roll No'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+
+    $form['student'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Student Name'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+
+    $form['helptext1']=array(
+        '#markup'=>'<h2>Enter The Marks Below</h2><br>'
+    );
+
+    $form['english'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('English'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+    $form['physics'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Physics'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+    $form['maths'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Mathematics'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+    
+    $form['chem'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Chemistry'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+
+    $form['cs'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Computer Science'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+
+    $form['submit'] = array(
+        '#type'=>'submit',
+        '#value'=>t('Save Marks'),
+        '#ajax' => array(
+            'callback' =>'roles_marks_save'
+        )
+    );
+
+    return $form;
+}
+
+function roles_marks_save($form,&$formState){
+    dpm($formState['values']);
+}   
+
+function roles_marks_view($form,&$formState){
 
 }
