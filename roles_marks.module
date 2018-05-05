@@ -104,6 +104,8 @@ function roles_marks_teach_view($form,&$formState){
 
 function roles_marks_save($form,&$formState){
     dpm($formState['values']);
+    $commands[] = ajax_invoke(NULL,"displaySave",array('<strong>Data Saved</strong>'))
+    return array('#type'=>'ajax','#commands'=>$commands);
 }   
 
 function roles_marks_view($form,&$formState){
