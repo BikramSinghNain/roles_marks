@@ -95,6 +95,14 @@ function roles_marks_get_teach($form){
         )
     );
 
+    $form['displayAll'] = array(
+        '#type'=>'submit',
+        '#value'=>t('Display ALL Result'),
+        '#ajax' => array(
+           'callback' =>'roles_marks_all'
+        )
+    );
+
     $form['save_div']=array(
         '#type'=>'markup',
         '#prefix'=>'<div id="save_div">',
@@ -156,7 +164,6 @@ function roles_marks_get_stu($form){
 }
 
 function roles_marks_view($form,&$formState){
-
     $out = '';
     if(db_table_exists('roles_marks_data')){
         $query = db_query('SELECT * FROM {roles_marks_data} WHERE rollno = (:val)',array(':val'=>12053));
@@ -185,4 +192,31 @@ function roles_marks_view($form,&$formState){
 
     $commands[] = ajax_command_invoke(NULL,"displayMarks",array($out));
     return array('#type'=>'ajax','#commands'=>$commands);    
+}
+
+// Function to Displa ALl the marks
+function roles_marks_all($form,&$formState){
+    $out = '';
+    if(db_table_exists('roles_marks_data')){
+        $query = db_query('SELECT * FROM {roles_marks_data}');
+        $rows = $query->fetchall();
+        if(count($rows) < 1) $out = '<b> No Results </b>';
+        else{
+            $out .= '<table><tr><th>Roll No</th><th>Name</th><th>English</th><th>Physics</th><th>Mathematics</th><th>Chemistry</th><th>Computer Science</th></tr>';
+            foreach($rows as $row){
+                $out .= '<tr><td>';
+                $out .=  $row->rollno .'</td><td>';
+                $out .=  $row->sname.'</td><td>';
+                $out .=  $row->eng.'</td><td>';
+                $out .=  $row->phy .'</td><td>'; 
+                $out .=  $row->math .'</td><td>'; 
+                $out .=  $row->chem .'</td><td>'; 
+                $out .=  $row->cs .'</td></tr>';     
+            }
+            $out .= '</table>';
+        }
+    }else $out = '<b>Data Not Found :( </b>';
+
+    $commands[] = ajax_command_invoke(NULL,"diplaySave",array($out));
+    return array('#type'=>'ajax','#commands'=>$commands);
 }
