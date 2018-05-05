@@ -14,7 +14,117 @@ function roles_marks_menu(){
     return $items;
 }
 
-
 function roles_marks_form($form,&$formState){
+    global $user;
+    $isStu = false;
+    if(in_array('Student',$user->roles) || in_array('anonymous user',$user->roles)){
+        $isStu = true;
+    }
 
+    if(!$isStu){
+        $form = roles_marks_get_teach($form);
+    }
+    return $form;
+}
+
+// Function To get The Teaching Form
+function roles_marks_get_teach($form){
+    $form['rollno'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Roll No'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+
+    $form['student'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Student Name'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+
+    $form['helptext1']=array(
+        '#markup'=>'<h2>Enter The Marks Below</h2><br>'
+    );
+
+    $form['english'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('English'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+    $form['physics'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Physics'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+    $form['maths'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Mathematics'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+    
+    $form['chem'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Chemistry'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+
+    $form['cs'] = array(
+        '#type'=>'textfield',
+        '#title'=>t('Computer Science'),
+        '#size'=>30,
+        '#maxlength'=>20,
+        '#required'=>true
+    );
+    $form['submit'] = array(
+        '#type'=>'submit',
+        '#value'=>t('Save Marks'),
+        '#ajax' => array(
+           'callback' =>'roles_marks_save'
+        )
+    );
+
+    $form['save_div']=array(
+        '#type'=>'markup',
+        '#prefix'=>'<div id="save_div">',
+        '#suffix'=>'</div>'
+    );
+    return $form;
+}
+
+function roles_marks_save($form,&$formState){
+    $message = "Data Can't Be Saved";
+    $data = array();
+    $data['rollno'] = $formState['values']['rollno'];
+    $data['sname'] = $formState['values']['student'];
+    $data['eng'] = (int)$formState['values']['english'];
+    $data['phy'] = (int)$formState['values']['physics'];
+    $data['math'] = (int)$formState['values']['maths'];
+    $data['chem'] = (int)$formState['values']['chem'];
+    $data['cs'] = (int)$formState['values']['cs'];
+
+    $is_empty = false;
+    foreach($data as $d){
+        if(is_string($d) && empty($d))
+            $is_empty = true;
+    }
+    
+    if(!$is_empty && db_table_exists('roles_marks_data')){
+        $query = db_insert('roles_marks_data');
+        $query->fields($data)->execute();
+        $message = 'Data Saved';
+    }
+
+    $commands[] = ajax_command_invoke(NULL,"diplaySave",array('<strong>'.$message.'</strong>'));
+    return array('#type'=>'ajax','#commands'=>$commands);
 }
