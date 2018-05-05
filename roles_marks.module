@@ -3,7 +3,7 @@
 function roles_marks_menu(){
     $items = array();
     $items['themarks'] = array(
-        'title' => 'The Marks',
+        'title' => 'Result',
         'description'=>'Display/Modify The Marks',
         'page callback'=>'drupal_get_form',
         'page arguments'=>array(
@@ -146,5 +146,43 @@ function roles_marks_get_stu($form){
             'callback'=>'roles_marks_view'
         )
     );
+    $form['display_marks']=array(
+        '#type'=>'markup',
+        '#prefix'=>'<div id="display_marks">',
+        '#suffix'=>'</div>'
+    );
+
     return $form;
+}
+
+function roles_marks_view($form,&$formState){
+
+    $out = '';
+    if(db_table_exists('roles_marks_data')){
+        $query = db_query('SELECT * FROM {roles_marks_data} WHERE rollno = (:val)',array(':val'=>12053));
+        $rows = $query->fetchall();
+        if(count($rows) < 1) $out = '<b> Result Not Found :( </b>';
+        else{
+            $out .= '<h2>Student Name : '.$rows[0]->sname.'</h2>';
+            $out .= '<h2>Roll Number : '.$rows[0]->rollno.'</h2>';
+            $out .= '<table><tr><th>Subject</th><th>Marks</th></tr>';
+            $out .= '<tr><td>';
+            $out .= 'English</td><td>';
+            $out .= $rows[0]->eng.'</td></tr><tr><td>';
+            $out .= 'Physics</td><td>';
+            $out .= $rows[0]->phy.'</td></tr><tr><td>';
+            $out .= 'Mathematics</td><td>';
+            $out .= $rows[0]->math.'</td></tr><tr><td>';
+            $out .= 'Chemistry</td><td>';
+            $out .= $rows[0]->chem.'</td></tr><tr><td>';
+            $out .= 'Computer Science</td><td>';
+            $out .= $rows[0]->cs.'</td></tr>';
+            $out .= '</table>';
+            $per = ($rows[0]->cs+$rows[0]->chem+$rows[0]->math+$rows[0]->phy+$rows[0]->eng)/5;
+            $out .= '<h2> Percentage : '.$per.'%</h2>';
+        }
+    }else $out = '<b>Data Not Found :( </b>';
+
+    $commands[] = ajax_command_invoke(NULL,"displayMarks",array($out));
+    return array('#type'=>'ajax','#commands'=>$commands);    
 }
