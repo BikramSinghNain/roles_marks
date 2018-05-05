@@ -1,144 +1,20 @@
 <?php
 
 function roles_marks_menu(){
-    global $user;
-    $theCallback = 'roles_marks_stu_view';
     $items = array();
-    if(in_array('administrator',$user->roles) || in_array('Teacher',$user->roles)){
-        $theCallback = 'roles_marks_teach_view';
-    }
     $items['themarks'] = array(
         'title' => 'The Marks',
         'description'=>'Display/Modify The Marks',
         'page callback'=>'drupal_get_form',
         'page arguments'=>array(
-            $theCallback
+            'roles_marks_form'
         ),
         'access callback'=>true
     );
-
     return $items;
 }
 
-function roles_marks_stu_view($form,&$formState){
 
-    $form['submit'] = array(
-        '#type'=>'submit',
-        '#title'=>'Save Marks',
-        '#ajax' => array(
-            'callback' =>'roles_marks_view'
-        )
-    );    
-    return $form;
-}
+function roles_marks_form($form,&$formState){
 
-function roles_marks_teach_view($form,&$formState){
-    $form['rollno'] = array(
-        '#type'=>'textfield',
-        '#title'=>t('Roll No'),
-        '#size'=>30,
-        '#maxlength'=>20,
-        '#required'=>true
-    );
-
-    $form['student'] = array(
-        '#type'=>'textfield',
-        '#title'=>t('Student Name'),
-        '#size'=>30,
-        '#maxlength'=>20,
-        '#required'=>true
-    );
-
-    $form['helptext1']=array(
-        '#markup'=>'<h2>Enter The Marks Below</h2><br>'
-    );
-
-    $form['english'] = array(
-        '#type'=>'textfield',
-        '#title'=>t('English'),
-        '#size'=>30,
-        '#maxlength'=>20,
-        '#required'=>true
-    );
-    $form['physics'] = array(
-        '#type'=>'textfield',
-        '#title'=>t('Physics'),
-        '#size'=>30,
-        '#maxlength'=>20,
-        '#required'=>true
-    );
-    $form['maths'] = array(
-        '#type'=>'textfield',
-        '#title'=>t('Mathematics'),
-        '#size'=>30,
-        '#maxlength'=>20,
-        '#required'=>true
-    );
-    
-    $form['chem'] = array(
-        '#type'=>'textfield',
-        '#title'=>t('Chemistry'),
-        '#size'=>30,
-        '#maxlength'=>20,
-        '#required'=>true
-    );
-
-    $form['cs'] = array(
-        '#type'=>'textfield',
-        '#title'=>t('Computer Science'),
-        '#size'=>30,
-        '#maxlength'=>20,
-        '#required'=>true
-    );
-    $form['submit'] = array(
-        '#type'=>'submit',
-        '#value'=>t('Save Marks'),
-        '#ajax' => array(
-            'callback' =>'roles_marks_save'
-        )
-    );
-
-    $form['save_div']=array(
-        '#type'=>'markup',
-        '#prefix'=>'<div id="save_div">',
-        '#suffix'=>'</div>'
-    );
-
-    return $form;
-}
-
-function roles_marks_save($form,&$formState){
-    $message = "Data Can't Be Saved";
-    $data = array();
-    $data['rollno'] = $formState['values']['rollno'];
-    $data['sname'] = $formState['values']['student'];
-    $data['eng'] = (int)$formState['values']['english'];
-    $data['phy'] = (int)$formState['values']['physics'];
-    $data['math'] = (int)$formState['values']['maths'];
-    $data['chem'] = (int)$formState['values']['chem'];
-    $data['cs'] = (int)$formState['values']['cs'];
-
-    $is_empty = false;
-    foreach($data as $d){
-        if(is_string($d) && empty($d))
-            $is_empty = true;
-    }
-    
-    if(!$is_empty && db_table_exists('roles_marks_data')){
-        $query = db_insert('roles_marks_data');
-        $query->fields($data)->execute();
-        $message = 'Data Saved';
-    }
-
-    $commands[] = ajax_command_invoke(NULL,"diplaySave",array('<strong>'.$message.'</strong>'));
-    return array('#type'=>'ajax','#commands'=>$commands);
-}   
-
-function roles_marks_view($form,&$formState){
-        // $out = '';
-        // $query = db_query('SELECT * FROM {roles_marks_data} WHERE rollno = (:val)',array(':val'=>12053));
-        // $rows = $query->fetchall();
-        // foreach($rows as $row){
-
-        // }
 }
