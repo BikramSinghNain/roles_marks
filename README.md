@@ -17,3 +17,9 @@ Set everthing else to default and click on Save configuration.
 ## Demo
 ### Student View
 ![Student Demo](demo/student.jpg)
+### Teacher/Admin View
+![Teacher Demo1](demo/teacher.jpg)
+Saving Data to the Database : 
+![Teacher Saving Data](demo/teacher_save.jpg)
+Displaying Complete Database
+![Teacher View Complete Data](demo/teacher_all.jpg)
