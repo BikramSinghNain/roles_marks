@@ -2,5 +2,49 @@
 
 // Implementation of hook_install()
 function roles_marks_install(){
-
+    // Schema for the roles_marks_data table
+    $schema = array(
+        'description'=>'Table to store data for student marks',
+        'fields'=>array(
+            'rollno'=>array(
+                'description'=>'The roll no of Student',
+                'type'=>'varchar',
+                'length'=>20,
+                'not null'=>true
+            ),
+            'sname'=>array(
+                'description'=>'The name of student.',
+                'type'=>'char',
+                'length'=>40,
+            ),
+            'eng'=>array(
+                'description'=>'Marks of english',
+                'type'=>'int'
+            ),
+            'phy'=>array(
+                'description'=>'Marks of Physics',
+                'type'=>'int'
+            ),
+            'math'=>array(
+                'description'=>'Marks of Mathematics',
+                'type'=>'int'
+            ),
+            'chem'=>array(
+                'description'=>'Marks of Chemistry',
+                'type'=>'int'
+            ),
+            'cs'=>array(
+                'description'=>'Marks of Computer Science',
+                'type'=>'int'
+            )
+        ),
+        'unique keys'=> array(
+            'rollno'=>array(
+                'rollno'
+            )
+        )
+    );
+    // check if table not exist then add the table
+    if(!db_table_exists('roles_marks_data'))
+        db_create_table('roles_marks_data',$schema);
 }
